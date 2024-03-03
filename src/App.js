@@ -1,30 +1,39 @@
 import React, { useState } from "react";
-import { Route, BrowserRouter as Router, Redirect } from "react-router-dom";
 import {
   AppBar,
   Button,
-  IconButton,
-  Tab,
-  Tabs,
   Typography,
   Toolbar,
 } from "@mui/material";
-import { Add, Category, Storefront, Inventory2 } from "@mui/icons-material";
-// import ManageCategory from "./pages/manageCategory";
-// import ManageStock from "./pages/manageStock";
-// import AddStockForm from "./components/AddStock";
-// import StorePage from "./pages/manageStore";
-// import { useDataContext } from "./context/DataContext";
+import Box from '@mui/material/Box';
+
 import "./App.css";
-
+const sideNavItems = ['Stores', 'Categories', 'Stock']
 const App = () => {
+  const [page, setPage] = useState('');
 
+  const handleOption = (i) => {
+    setPage(i)
+  }
   return (
           <div>
             <AppBar position="static">
-              <Toolbar>
-                <Typography variant="h6">Home</Typography>
-              </Toolbar>
+            <Toolbar>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+          >
+            StockApp
+          </Typography>
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {sideNavItems.map((item) => (
+              <Button className="topnav-buttons" key={item} sx={{ color: '#fff' }} onClick={event => handleOption(item)}>
+                {item}
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
             </AppBar>
     </div>
   )
