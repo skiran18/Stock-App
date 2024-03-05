@@ -9,6 +9,7 @@ import {
 import Box from '@mui/material/Box';
 import { FormControl, FormControlLabel } from '@mui/material';
 import { RadioGroup, Radio } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import "./App.css";
 
@@ -20,6 +21,7 @@ const stores = [
 
 const sideNavItems = ['Stores', 'Categories', 'Stock']
 const App = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState('');
 
   const handleOption = (i) => {
@@ -32,6 +34,7 @@ const App = () => {
     const storeId = parseInt(event.target.value);
     const selected = stores.find(store => store.id === storeId);
     setSelectedStore(selected);
+    navigate('/categories');
   };
 
 
