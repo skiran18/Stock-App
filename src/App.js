@@ -28,7 +28,7 @@ const App = () => {
     setPage(i)
   }
 
-  const [selectedStore, setSelectedStore] = useState(stores[0]);
+  const [selectedStore, setSelectedStore] = useState('no srof');
 
   const handleStoreChange = (event) => {
     const storeId = parseInt(event.target.value);
@@ -59,7 +59,7 @@ const App = () => {
         </Toolbar>
             </AppBar>
             <FormControl component="fieldset">
-        <RadioGroup aria-label="store" name="store" value={selectedStore.id.toString()} onChange={handleStoreChange}>
+        <RadioGroup aria-label="store" name="store" value={typeof(selectedStore) !== "string" && selectedStore.id.toString()} onChange={handleStoreChange}>
           {stores.map(store => (
             <Card key={store.id} style={{ margin: '8px', width:'100%' }}>
               <CardContent>
