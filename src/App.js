@@ -56,8 +56,6 @@ const App = () => {
     setPage(i);
   };
 
-  const [selectedStore, setSelectedStore] = useState("no srof");
-
   const handleStoreClick = (code) => {
     localStorage.setItem("storeCode", code)
     console.log("code" , code)
