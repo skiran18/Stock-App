@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.css-1pqm26d-MuiAvatar-img {
+  height: 83% !important
+}
