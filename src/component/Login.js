@@ -28,11 +28,11 @@ const customTheme = createTheme({
 
 export default function CustomLogIn() {
   const [formData, setFormData] = useState({
-    userName: '',
+    username: '',
     password: ''
   });
   const navigate = useNavigate();
-  const { userName, password } = formData;
+  const { username, password } = formData;
   const [loginError, setLoginError] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -45,13 +45,13 @@ export default function CustomLogIn() {
     event.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/login', {
-        userName,
+        username,
         password
       });
       console.log(res);
       alert('Login successful')
       setIsLoggedIn(true)
-      navigate('/')
+      navigate('/app')
     } catch (err) {
       console.log(err.response.data.message)
       setLoginError(err.response.data.message);
@@ -95,11 +95,11 @@ export default function CustomLogIn() {
                 fullWidth
                 id="username"
                 label="User Name"
-                name="userName"
-                autoComplete="userName"
+                name="username"
+                autoComplete="username"
                 autoFocus
                 onChange={e => onChange(e)}
-                value={userName}
+                value={username}
               />
               <TextField
                 margin="normal"
