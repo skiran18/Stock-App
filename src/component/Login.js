@@ -51,6 +51,7 @@ export default function CustomLogIn() {
       console.log(res);
       alert('Login successful')
       localStorage.setItem("designation", res.data.designation)
+      localStorage.setItem("isLoggesIn", true)
       setIsLoggedIn(true)
       navigate('/app')
     } catch (err) {

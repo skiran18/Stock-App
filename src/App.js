@@ -17,8 +17,8 @@ import "./App.css";
 import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
 
-const sideNavItems = ["Stores", "Categories", "Stocks"];
-const employeeSideNavItems = ["Categories", "Stocks"];
+const sideNavItems = ["Stores", "Categories", "Stocks", "Logout"];
+const employeeSideNavItems = ["Categories", "Stocks", "Logout"];
 let navItems = [];
 
 const App = () => {
@@ -47,7 +47,12 @@ const App = () => {
   const [page, setPage] = useState("");
 
   const handleOption = (i) => {
-    setPage(i);
+    if(i === "Logout"){
+      localStorage.clear();
+      navigate("/")
+    } else {
+    setPage(i)
+    };
   };
 
   const handleStoreClick = (code) => {
