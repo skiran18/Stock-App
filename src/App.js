@@ -17,14 +17,8 @@ import "./App.css";
 import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
 
-const stores = [
-  { id: 1, name: "Store 1", description: "Description for Store 1" },
-  { id: 2, name: "Store 2", description: "Description for Store 2" },
-  { id: 3, name: "Store 3", description: "Description for Store 3" },
-];
-
-const sideNavItems = ["Stores", "Categories", "Stock"];
-const employeeSideNavItems = ["Categories", "Stock"];
+const sideNavItems = ["Stores", "Categories", "Stocks"];
+const employeeSideNavItems = ["Categories", "Stocks"];
 let navItems = [];
 
 const App = () => {

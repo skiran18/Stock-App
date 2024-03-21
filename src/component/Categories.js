@@ -5,10 +5,8 @@ import {
   Button,
   Alert,
   Card,
-  CardContent,
-  FormControlLabel,
+  CardContent
 } from "@mui/material";
-import { RadioGroup, Radio, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -20,12 +18,8 @@ const Categories = () => {
       .then(async (response) => {
         const res = await response.json();
         setCategories(res.categoryStoreWise.categories);
-        // setPage('Stores')
-        // setStores(res.storeDetails);
-        console.log(categories);
       })
       .catch((error) => console.error(error));
-    // checkPrivileges();
   };
 
   useEffect(() => {
@@ -35,7 +29,6 @@ const Categories = () => {
   const navigate = useNavigate();
   const [newCategory, setNewCategory] = useState("");
   const [error, setError] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleAddCategory = async (event) => {
     const trimmedCategory = newCategory.trim();
