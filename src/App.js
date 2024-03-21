@@ -47,9 +47,12 @@ const App = () => {
   const [page, setPage] = useState("");
 
   const handleOption = (i) => {
+    const storeCode = localStorage.getItem("storeCode") ? localStorage.getItem("storeCode") : null
     if(i === "Logout"){
       localStorage.clear();
       navigate("/")
+    } else if(((localStorage.getItem("designation") === 'manager')) && (storeCode === null) && (i === "Categories" || i === "Stocks")) {
+      alert("Select a store to proceed with Catergories and Stocks")
     } else {
     setPage(i)
     };
