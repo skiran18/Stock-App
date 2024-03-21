@@ -50,6 +50,7 @@ export default function CustomLogIn() {
       });
       console.log(res);
       alert('Login successful')
+      localStorage.setItem("designation", res.data.designation)
       setIsLoggedIn(true)
       navigate('/app')
     } catch (err) {

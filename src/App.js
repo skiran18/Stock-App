@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import "./App.css";
+import Categories from "./component/Categories";
+import Stocks from "./component/Stocks";
 
 const stores = [
   { id: 1, name: "Store 1", description: "Description for Store 1" },
@@ -22,6 +24,9 @@ const stores = [
 ];
 
 const sideNavItems = ["Stores", "Categories", "Stock"];
+const employeeSideNavItems = ["Categories", "Stock"];
+let navItems = [];
+
 const App = () => {
   let [stores, setStores] = useState([]);
 
@@ -29,14 +34,20 @@ const App = () => {
     fetch("http://localhost:5000/home")
       .then(async (response) => {
         const res = await response.json();
+        setPage('Stores')
         setStores(res.storeDetails);
       })
       .catch((error) => console.error(error));
+      checkPrivileges();
   };
 
   useEffect(() => {
     callStoreApi();
-  });
+  }, []);
+
+  const checkPrivileges = () => {
+   navItems = localStorage.getItem("designation") == "manager" ? sideNavItems : employeeSideNavItems;
+  }
 
   const navigate = useNavigate();
   const [page, setPage] = useState("");
@@ -47,14 +58,11 @@ const App = () => {
 
   const [selectedStore, setSelectedStore] = useState("no srof");
 
-  const handleClick = (code) => {
-    console.log(code)
-    // const storeId = parseInt(event.target.value);
-    // const selected = stores.find((store) => store.id === storeId);
-    // console.log(selected)
-    // setSelectedStore(selected);
-    // navigate("/categories");
-  };
+  const handleStoreClick = (code) => {
+    localStorage.setItem("storeCode", code)
+    console.log("code" , code)
+    setPage('Categories');
+  }
 
   return (
     <div>
@@ -68,7 +76,7 @@ const App = () => {
             StockApp
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {sideNavItems.map((item) => (
+            { navItems.map((item) => (
               <Button
                 className="topnav-buttons"
                 key={item}
@@ -81,17 +89,30 @@ const App = () => {
           </Box>
         </Toolbar>
       </AppBar>
-          {stores.map((store) => (
-            <div onClick={handleClick(store.storeCode)}>
-            <Card  style={{ cursor: 'pointer', margin: "8px", width: "100%" }}>
-              <CardContent >
-              <Typography variant="body1">{store.storeName}</Typography>
-                <Typography variant="body1">{store.address}</Typography>
-              </CardContent>
-            </Card>
+      {(page === 'Stores') && <Box>
+         {stores.map((store) => (
+          <div onClick={() => handleStoreClick(store.storeCode)}>
+          <Card  style={{ cursor: 'pointer', margin: "8px", width: "100%" }}>
+            <CardContent >
+            <Typography variant="body1">{store.storeName}</Typography>
+              <Typography variant="body1">{store.address}</Typography>
+            </CardContent>
+          </Card>
 
-            </div>
-          ))}
+          </div>
+        ))}
+      </Box>}
+         
+          <Box>
+        {(page === 'Categories') &&
+          <Categories />
+        }
+      </Box>
+      <Box>
+        {(page === 'Stocks') &&
+          <Stocks />
+        }
+      </Box>
     </div>
   );
 };
