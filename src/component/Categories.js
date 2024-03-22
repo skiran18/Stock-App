@@ -8,6 +8,8 @@ import {
   CardContent,
 } from "@mui/material";
 import axios from "axios";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -53,9 +55,16 @@ const Categories = () => {
       setError("");
     }
   };
+  const customTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#293b94",
+      },
+    },
+  });
 
   return (
-    <div>
+    <ThemeProvider theme={customTheme}>
       <br></br>
       <Typography variant="h6" gutterBottom>
         Add New Category
@@ -87,7 +96,7 @@ const Categories = () => {
             </Card>
           ))}
       </div>
-    </div>
+    </ThemeProvider>
   );
 };
 

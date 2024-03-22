@@ -11,6 +11,8 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 
 const Stocks = () => {
   const [categories, setCategories] = useState([]);
@@ -20,7 +22,13 @@ const Stocks = () => {
     count: "",
   });
   const storecode = localStorage.getItem("storeCode");
-
+  const customTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#293b94",
+      },
+    },
+  });
   const callStockApi = async () => {
     try {
       const response = await fetch(`http://localhost:5000/stock/${storecode}`);
@@ -105,6 +113,7 @@ const Stocks = () => {
     };
 
     return (
+      <ThemeProvider theme={customTheme}>
       <Card variant="outlined" sx={{ marginBottom: 1 }}>
         <CardContent>
           <Typography variant="body1">{name}</Typography>
@@ -122,10 +131,12 @@ const Stocks = () => {
           </Button>
         </CardContent>
       </Card>
+      </ThemeProvider>
     );
   };
 
   return (
+    <ThemeProvider theme={customTheme}>
     <Box>
       <Box sx={{ marginBottom: 2 }}>
         <Card variant="outlined">
@@ -202,6 +213,7 @@ const Stocks = () => {
         </Box>
       ))}
     </Box>
+    </ThemeProvider>
   );
 };
 

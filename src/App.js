@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import "./App.css";
 import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 
 const sideNavItems = ["Stores", "Categories", "Stocks", "Logout"];
 const employeeSideNavItems = ["Categories", "Stocks", "Logout"];
@@ -41,6 +43,13 @@ const App = () => {
         ? sideNavItems
         : employeeSideNavItems;
   };
+  const customTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#293b94",
+      },
+    },
+  });
 
   const navigate = useNavigate();
   const [page, setPage] = useState("");
@@ -69,7 +78,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <ThemeProvider theme={customTheme}>
       <AppBar position="static">
         <Toolbar>
           <Typography
@@ -110,7 +119,7 @@ const App = () => {
 
       <Box>{page === "Categories" && <Categories />}</Box>
       <Box>{page === "Stocks" && <Stocks />}</Box>
-    </div>
+      </ThemeProvider>
   );
 };
 
