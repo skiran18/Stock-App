@@ -8,11 +8,7 @@ import {
   CardContent,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import { FormControl, FormControlLabel } from "@mui/material";
-import { RadioGroup, Radio } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
 import "./App.css";
 import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
@@ -28,11 +24,11 @@ const App = () => {
     fetch("http://localhost:5000/home")
       .then(async (response) => {
         const res = await response.json();
-        setPage('Stores')
+        setPage("Stores");
         setStores(res.storeDetails);
       })
       .catch((error) => console.error(error));
-      checkPrivileges();
+    checkPrivileges();
   };
 
   useEffect(() => {
@@ -40,29 +36,37 @@ const App = () => {
   }, []);
 
   const checkPrivileges = () => {
-   navItems = localStorage.getItem("designation") == "manager" ? sideNavItems : employeeSideNavItems;
-  }
+    navItems =
+      localStorage.getItem("designation") == "manager"
+        ? sideNavItems
+        : employeeSideNavItems;
+  };
 
   const navigate = useNavigate();
   const [page, setPage] = useState("");
 
   const handleOption = (i) => {
-    const storeCode = localStorage.getItem("storeCode") ? localStorage.getItem("storeCode") : null
-    if(i === "Logout"){
+    const storeCode = localStorage.getItem("storeCode")
+      ? localStorage.getItem("storeCode")
+      : null;
+    if (i === "Logout") {
       localStorage.clear();
-      navigate("/")
-    } else if(((localStorage.getItem("designation") === 'manager')) && (storeCode === null) && (i === "Categories" || i === "Stocks")) {
-      alert("Select a store to proceed with Catergories and Stocks")
+      navigate("/");
+    } else if (
+      localStorage.getItem("designation") === "manager" &&
+      storeCode === null &&
+      (i === "Categories" || i === "Stocks")
+    ) {
+      alert("Select a store to proceed with Catergories and Stocks");
     } else {
-    setPage(i)
-    };
+      setPage(i);
+    }
   };
 
   const handleStoreClick = (code) => {
-    localStorage.setItem("storeCode", code)
-    console.log("code" , code)
-    setPage('Categories');
-  }
+    localStorage.setItem("storeCode", code);
+    setPage("Categories");
+  };
 
   return (
     <div>
@@ -76,7 +80,7 @@ const App = () => {
             StockApp
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            { navItems.map((item) => (
+            {navItems.map((item) => (
               <Button
                 className="topnav-buttons"
                 key={item}
@@ -89,30 +93,23 @@ const App = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {(page === 'Stores') && <Box>
-         {stores.map((store) => (
-          <div onClick={() => handleStoreClick(store.storeCode)}>
-          <Card  style={{ cursor: 'pointer', margin: "8px", width: "100%" }}>
-            <CardContent >
-            <Typography variant="body1">{store.storeName}</Typography>
-              <Typography variant="body1">{store.address}</Typography>
-            </CardContent>
-          </Card>
+      {page === "Stores" && (
+        <Box>
+          {stores.map((store) => (
+            <div onClick={() => handleStoreClick(store.storeCode)}>
+              <Card style={{ cursor: "pointer", margin: "8px", width: "100%" }}>
+                <CardContent>
+                  <Typography variant="body1">{store.storeName}</Typography>
+                  <Typography variant="body1">{store.address}</Typography>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </Box>
+      )}
 
-          </div>
-        ))}
-      </Box>}
-         
-          <Box>
-        {(page === 'Categories') &&
-          <Categories />
-        }
-      </Box>
-      <Box>
-        {(page === 'Stocks') &&
-          <Stocks />
-        }
-      </Box>
+      <Box>{page === "Categories" && <Categories />}</Box>
+      <Box>{page === "Stocks" && <Stocks />}</Box>
     </div>
   );
 };

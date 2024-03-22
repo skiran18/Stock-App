@@ -5,9 +5,8 @@ import {
   Button,
   Alert,
   Card,
-  CardContent
+  CardContent,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Categories = () => {
@@ -26,7 +25,6 @@ const Categories = () => {
     callCategoriesApi();
   }, []);
 
-  const navigate = useNavigate();
   const [newCategory, setNewCategory] = useState("");
   const [error, setError] = useState("");
 
@@ -46,7 +44,6 @@ const Categories = () => {
           newCategory,
           storecode,
         });
-        console.log(res);
         alert("category added successfully");
         callCategoriesApi();
       } catch (err) {
