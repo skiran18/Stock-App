@@ -39,14 +39,17 @@ export default function CustomLogIn() {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/login", {
+      const res = await axios.post("http://13.53.184.137:5000/login", {
         username,
         password,
       });
       alert("Login successful");
-      localStorage.setItem("designation", res.data.designation);
       localStorage.setItem("isLoggesIn", true);
-      navigate("/app");
+      const designation = localStorage.setItem("designation", res.data.designation);
+      if(designation !== "manager") {
+        localStorage.setItem("storeCode", res.data.storeId);
+        navigate("/app");  
+      };
     } catch (err) {
       setLoginError(err.response.data.message);
     }

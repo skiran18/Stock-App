@@ -14,7 +14,6 @@ import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-
 const sideNavItems = ["Stores", "Categories", "Stocks", "Logout"];
 const employeeSideNavItems = ["Categories", "Stocks", "Logout"];
 let navItems = [];
@@ -23,7 +22,7 @@ const App = () => {
   let [stores, setStores] = useState([]);
 
   const callStoreApi = (async) => {
-    fetch("http://localhost:5000/home")
+    fetch("http://13.53.184.137:5000/home")
       .then(async (response) => {
         const res = await response.json();
         setPage("Stores");
@@ -102,24 +101,46 @@ const App = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {page === "Stores" && (
-        <Box>
-          {stores.map((store) => (
-            <div onClick={() => handleStoreClick(store.storeCode)}>
-              <Card style={{ cursor: "pointer", margin: "8px", width: "100%" }}>
-                <CardContent>
-                  <Typography variant="body1">{store.storeName}</Typography>
-                  <Typography variant="body1">{store.address}</Typography>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
-        </Box>
-      )}
+      {page === "Stores" &&
+        localStorage.getItem("designation") === "manager" && (
+          <Box>
+            {stores.map((store) => (
+              <div onClick={() => handleStoreClick(store.storeCode)}>
+                <Card
+                  style={{ cursor: "pointer", margin: "8px", width: "100%" }}
+                >
+                  <CardContent>
+                    <Typography variant="body1">{store.storeName}</Typography>
+                    <Typography variant="body1">{store.address}</Typography>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </Box>
+        )}
+      {page === "Stores" &&
+        localStorage.getItem("designation") === "employee" && (
+          <Box>
+            {stores
+              .filter((store) => store.storeCode === localStorage.getItem("storeCode"))
+              .map((store) => (
+                <div onClick={() => handleStoreClick(store.storeCode)}>
+                  <Card
+                    style={{ cursor: "pointer", margin: "8px", width: "100%" }}
+                  >
+                    <CardContent>
+                      <Typography variant="body1">{store.storeName}</Typography>
+                      <Typography variant="body1">{store.address}</Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+          </Box>
+        )}
 
       <Box>{page === "Categories" && <Categories />}</Box>
       <Box>{page === "Stocks" && <Stocks />}</Box>
-      </ThemeProvider>
+    </ThemeProvider>
   );
 };
 

@@ -15,7 +15,7 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   let storecode = localStorage.getItem("storeCode");
   const callCategoriesApi = () => {
-    fetch(`http://localhost:5000/category/${storecode}`)
+    fetch(`http://13.53.184.137:5000/category/${storecode}`)
       .then(async (response) => {
         const res = await response.json();
         setCategories(res.categoryStoreWise.categories);
@@ -42,7 +42,7 @@ const Categories = () => {
       event.preventDefault();
       setNewCategory(newCategory);
       try {
-        const res = await axios.post("http://localhost:5000/category", {
+        const res = await axios.post("http://13.53.184.137:5000/category", {
           newCategory,
           storecode,
         });
