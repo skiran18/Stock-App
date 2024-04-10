@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "./stockapp.png"; // Import the image
+import '../App.css'
 
 const customTheme = createTheme({
   palette: {
@@ -38,6 +39,9 @@ export default function CustomLogIn() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    if(!username || !password){
+      setLoginError("Please enter all the required fields")
+    } else {
     try {
       const res = await axios.post("http://13.53.184.137:5000/login", {
         username,
@@ -51,8 +55,10 @@ export default function CustomLogIn() {
         navigate("/app");  
       };
     } catch (err) {
+      console.log(err)
       setLoginError(err.response.data.message);
     }
+  }
   };
 
   return (
@@ -114,10 +120,6 @@ export default function CustomLogIn() {
                 autoComplete="current-password"
                 onChange={(e) => onChange(e)}
                 value={password}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
               />
               <Button
                 type="submit"

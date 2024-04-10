@@ -1,6 +1,18 @@
+@media screen and (max-width: 480px) {
+  .App {
+    text-align: center;
+  }
+}
+
 .App {
   text-align: center;
 }
+
+
+.loginerrmsg{
+  color: red;
+}
+
 
 .App-logo {
   height: 40vmin;
@@ -40,3 +52,5 @@
 .css-1pqm26d-MuiAvatar-img {
   height: 83% !important
 }
+
+

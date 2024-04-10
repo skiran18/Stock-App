@@ -4,16 +4,16 @@ import {
   TextField,
   Button,
   Alert,
-  Card,
-  CardContent,
 } from "@mui/material";
 import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   let storecode = localStorage.getItem("storeCode");
+
   const callCategoriesApi = () => {
     fetch(`http://13.53.184.137:5000/category/${storecode}`)
       .then(async (response) => {
@@ -46,7 +46,7 @@ const Categories = () => {
           newCategory,
           storecode,
         });
-        alert("category added successfully");
+        alert("Category added successfully");
         callCategoriesApi();
       } catch (err) {
         console.log(err.response.data.message);
@@ -55,6 +55,17 @@ const Categories = () => {
       setError("");
     }
   };
+
+  const handleDeleteCategory = async (categoryToDelete) => {
+    try {
+      await axios.post("http://13.53.184.137:5000/category/delete", { category: categoryToDelete, storecode });
+      alert("Category deleted successfully");
+      callCategoriesApi();
+    } catch (err) {
+      console.log(err.response.data.message);
+    }
+  };
+
   const customTheme = createTheme({
     palette: {
       primary: {
@@ -65,7 +76,7 @@ const Categories = () => {
 
   return (
     <ThemeProvider theme={customTheme}>
-      <br></br>
+      <br />
       <Typography variant="h6" gutterBottom>
         Add New Category
       </Typography>
@@ -78,22 +89,27 @@ const Categories = () => {
           onChange={(e) => setNewCategory(e.target.value)}
           style={{ marginRight: "10px" }}
         />
-        <Button variant="contained" color="primary" onClick={handleAddCategory}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddCategory}
+        >
           Add
         </Button>
       </div>
-      <br></br>
+      <br />
       <Typography variant="h6" gutterBottom>
         Categories List
       </Typography>
       <div>
         {categories &&
           categories.map((item, index) => (
-            <Card key={index} style={{ margin: "8px", width: "200px" }}>
-              <CardContent>
-                <Typography component="div">{item}</Typography>
-              </CardContent>
-            </Card>
+            <div key={index} style={{ display: "inline-block", margin: "5px" }}>
+              <Button variant="outlined" onClick={() => handleDeleteCategory(item)}>
+                {item}
+                <DeleteIcon />
+              </Button>
+            </div>
           ))}
       </div>
     </ThemeProvider>
