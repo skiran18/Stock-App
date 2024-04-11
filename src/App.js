@@ -18,6 +18,7 @@ import "./App.css";
 import Categories from "./component/Categories";
 import Stocks from "./component/Stocks";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from 'axios';
 
 const sideNavItems = ["Stores", "Categories", "Stocks", "Logout"];
 const employeeSideNavItems = ["Categories", "Stocks", "Logout"];
@@ -30,17 +31,46 @@ const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    callStoreApi();
+    if (!localStorage.getItem('isLoggedIn')) {
+      navigate("/");
+    }
+    else{
+      callStoreApi();
+      const interval = setInterval(refreshTokenCall, 60000);
+      return () => clearInterval(interval);
+    }
   }, []);
 
+  const refreshtoken = localStorage.getItem('refreshtoken')
+  const refreshTokenCall = async () => {
+    try {
+      const response = await axios.post('http://13.53.184.137:5000/auth/refreshToken', { token, refreshtoken });
+      console.log(response)
+      localStorage.setItem('token', response.data.token);
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+    }
+  };
+
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  };
+
   const callStoreApi = () => {
-    fetch("http://13.53.184.137:5000/home")
-      .then(async (response) => {
-        const res = await response.json();
+  
+    axios.get("http://13.53.184.137:5000/home", config)
+      .then(response => {  
         setPage("Stores");
-        setStores(res.storeDetails);
+        setStores(response.data.storeDetails);
       })
-      .catch((error) => console.error(error));
+      .catch(error => {
+        console.error(error);
+      });
+  
     checkPrivileges();
   };
 
@@ -58,13 +88,19 @@ const App = () => {
       },
     },
   });
-  
+
   const handleOption = (i) => {
     const storeCode = localStorage.getItem("storeCode")
       ? localStorage.getItem("storeCode")
       : null;
     if (i === "Logout") {
-      localStorage.clear();
+      axios.delete("http://13.53.184.137:5000/auth/logout", config)
+      .then(response => {  
+        localStorage.clear();
+      })
+      .catch(error => {
+        console.error(error);
+      });
       navigate("/");
     } else if (
       localStorage.getItem("designation") === "manager" &&
@@ -93,11 +129,15 @@ const App = () => {
   };
 
   return (
+    localStorage.getItem('isLoggedIn') &&
     <ThemeProvider theme={customTheme}>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            StockApp {'>'} {localStorage.getItem('storeCode')? localStorage.getItem('storeCode') : ""}
+            StockApp {">"}{" "}
+            {localStorage.getItem("storeCode")
+              ? localStorage.getItem("storeCode")
+              : ""}
           </Typography>
           <Box sx={{ display: { xs: "block", sm: "none" } }}>
             <Button
@@ -125,11 +165,7 @@ const App = () => {
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
         <List>
           {navItems.map((item) => (
-            <ListItem
-              button
-              key={item}
-              onClick={(event) => handleOption(item)}
-            >
+            <ListItem button key={item} onClick={(event) => handleOption(item)}>
               <ListItemText primary={item} />
             </ListItem>
           ))}
@@ -140,25 +176,6 @@ const App = () => {
           localStorage.getItem("designation") === "manager" && (
             <Box>
               {stores.map((store) => (
-                <div onClick={() => handleStoreClick(store.storeCode)}>
-                <Card
-                  style={{ cursor: "pointer", margin: "8px", width: "100%" }}
-                >
-                  <CardContent>
-                    <Typography variant="body1">{store.storeName}</Typography>
-                    <Typography variant="body1">{store.address}</Typography>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </Box>
-        )}
-      {page === "Stores" &&
-        localStorage.getItem("designation") === "employee" && (
-          <Box>
-            {stores
-              .filter((store) => store.storeCode === localStorage.getItem("storeCode"))
-              .map((store) => (
                 <div onClick={() => handleStoreClick(store.storeCode)}>
                   <Card
                     style={{ cursor: "pointer", margin: "8px", width: "100%" }}
@@ -172,9 +189,41 @@ const App = () => {
               ))}
             </Box>
           )}
+        {page === "Stores" &&
+          localStorage.getItem("designation") === "employee" && (
+            <Box>
+              {stores
+                .filter(
+                  (store) =>
+                    store.storeCode === localStorage.getItem("storeCode")
+                )
+                .map((store) => (
+                  <div onClick={() => handleStoreClick(store.storeCode)}>
+                    <Card
+                      style={{
+                        cursor: "pointer",
+                        margin: "8px",
+                        width: "100%",
+                      }}
+                    >
+                      <CardContent>
+                        <Typography variant="body1">
+                          {store.storeName}
+                        </Typography>
+                        <Typography variant="body1">{store.address}</Typography>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+            </Box>
+          )}
 
-        <Box sx={{ marginLeft: "64px" }}>{page === "Categories" && <Categories />}</Box>
-        <Box sx={{ marginLeft: "64px", marginTop: "64px" }}>{page === "Stocks" && <Stocks />}</Box>
+        <Box sx={{ marginLeft: "64px" }}>
+          {page === "Categories" && <Categories />}
+        </Box>
+        <Box sx={{ marginLeft: "64px", marginTop: "64px" }}>
+          {page === "Stocks" && <Stocks />}
+        </Box>
       </Box>
     </ThemeProvider>
   );

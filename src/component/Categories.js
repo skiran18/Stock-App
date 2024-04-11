@@ -9,22 +9,46 @@ import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom";
+
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   let storecode = localStorage.getItem("storeCode");
-
-  const callCategoriesApi = () => {
-    fetch(`http://13.53.184.137:5000/category/${storecode}`)
-      .then(async (response) => {
-        const res = await response.json();
-        setCategories(res.categoryStoreWise.categories);
-      })
-      .catch((error) => console.error(error));
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   };
 
+  const callCategoriesApi = () => {
+    const storecode = localStorage.getItem('storeCode');
+    axios.get(`http://13.53.184.137:5000/category/${storecode}`, config)
+      .then((response) => {
+        const headers = response.headers;
+        if (headers.authorization) {
+          console.log('Authorization header found:', headers.authorization);
+        } else {
+          console.log('Authorization header not found');
+        }
+        setCategories(response.data.categoryStoreWise.categories);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    callCategoriesApi();
+    if (!localStorage.getItem('isLoggedIn')) {
+      navigate("/");
+    }
+    else{
+      callCategoriesApi();
+    }
   }, []);
 
   const [newCategory, setNewCategory] = useState("");
@@ -45,7 +69,7 @@ const Categories = () => {
         const res = await axios.post("http://13.53.184.137:5000/category", {
           newCategory,
           storecode,
-        });
+        }, config);
         alert("Category added successfully");
         callCategoriesApi();
       } catch (err) {
@@ -58,7 +82,7 @@ const Categories = () => {
 
   const handleDeleteCategory = async (categoryToDelete) => {
     try {
-      await axios.post("http://13.53.184.137:5000/category/delete", { category: categoryToDelete, storecode });
+      await axios.post("http://13.53.184.137:5000/category/delete", { category: categoryToDelete, storecode }, config);
       alert("Category deleted successfully");
       callCategoriesApi();
     } catch (err) {
@@ -75,6 +99,7 @@ const Categories = () => {
   });
 
   return (
+    localStorage.getItem('isLoggedIn') &&
     <ThemeProvider theme={customTheme}>
       <br />
       <Typography variant="h6" gutterBottom>

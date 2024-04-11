@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "./stockapp.png"; // Import the image
+import backgroundImage from "./stockapp.png";
 import '../App.css'
 
 const customTheme = createTheme({
@@ -48,10 +48,13 @@ export default function CustomLogIn() {
         password,
       });
       alert("Login successful");
-      localStorage.setItem("isLoggesIn", true);
-      const designation = localStorage.setItem("designation", res.data.designation);
+      localStorage.setItem("isLoggedIn", true);
+      const designation = localStorage.setItem("designation", res.data.user.designation);
       if(designation !== "manager") {
-        localStorage.setItem("storeCode", res.data.storeId);
+        localStorage.setItem("storeCode", res.data.user.storeId);
+        localStorage.setItem("tokenexpiry", res.data.expiresIn);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("refreshtoken", res.data.refreshToken);
         navigate("/app");  
       };
     } catch (err) {

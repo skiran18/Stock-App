@@ -13,13 +13,15 @@ import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+
 
 const Stocks = () => {
   const [categories, setCategories] = useState([]);
   const [newStock, setNewStock] = useState({
     category: "",
     name: "",
-    count: "",
+    count: 0,
   });
   const storecode = localStorage.getItem("storeCode");
   const customTheme = createTheme({
@@ -29,29 +31,44 @@ const Stocks = () => {
       },
     },
   });
-  const callStockApi = async () => {
-    try {
-      const response = await fetch(
-        `http://13.53.184.137:5000/stock/${storecode}`
-      );
-      const data = await response.json();
-      setCategories(Object.entries(data.stockStoreWise.stock.categories)); // Convert response object to array of [key, value] pairs
-
-      // Extract category names and set them in the category field of newStock
-      const categoryNames = Object.keys(data.stockStoreWise.stock.categories);
-      if (categoryNames.length > 0) {
-        setNewStock({
-          ...newStock,
-          category: categoryNames[0], // Set the first category name as default
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
   };
+ 
+
+const callStockApi = async () => {
+  try {
+    const response = await axios.get(
+      `http://13.53.184.137:5000/stock/${storecode}`, config
+    );
+    const data = response.data;
+    setCategories(Object.entries(data.stockStoreWise.stock.categories));
+
+    const categoryNames = Object.keys(data.stockStoreWise.stock.categories);
+    if (categoryNames.length > 0) {
+      setNewStock({
+        ...newStock,
+        category: categoryNames[0],
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   useEffect(() => {
-    callStockApi();
+    if (!localStorage.getItem('isLoggedIn')) {
+      navigate("/");
+    }
+    else{
+      callStockApi();
+    }
   }, []);
 
   const handleAddStock = async () => {
@@ -63,19 +80,19 @@ const Stocks = () => {
           storecode,
           categoryItem: {
             name: newStock.name,
-            count: newStock.count,
+            count: Number(newStock.count),
           },
-        }
+        }, config
       );
       setNewStock({
         category: "",
         name: "",
-        count: "",
+        count: 0,
       });
       newStock.category = "";
       newStock.name = "";
-      newStock.count = "";
-      callStockApi(); // Refresh the stock list after adding a new stock
+      newStock.count = 0;
+      callStockApi();
     } catch (err) {
       console.log(err.response.data.message);
     }
@@ -110,7 +127,8 @@ const Stocks = () => {
             storecode,
             name,
             newCount: stockcount,
-          }
+          },
+          config
         );
       } catch (err) {
         console.log(err.response.data.message);
@@ -123,7 +141,7 @@ const Stocks = () => {
           category,
           storecode,
           name
-        })
+        }, config)
         callStockApi();
       } catch (err) {
         console.log(err.response.data.message);
@@ -157,6 +175,7 @@ const Stocks = () => {
   };
 
   return (
+    localStorage.getItem('isLoggedIn') &&
     <ThemeProvider theme={customTheme}>
       <Box>
         <Box sx={{ marginBottom: 2 }}>
